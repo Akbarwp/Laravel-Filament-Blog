@@ -7,7 +7,7 @@
                 @if ($post->thumbnail)
                     <img src="{{ $post->thumbnail }}" class="w-full">
                 @else
-                    <img src="https://source.unsplash.com/1920x1080?random">
+                    <img src="https://source.unsplash.com/1920x1080?{{ $post->slug }}">
                 @endif
             </a>
             <div class="bg-white flex flex-col justify-start p-6">
@@ -18,12 +18,14 @@
                 </div>
                 <h1 class="text-3xl font-bold hover:text-gray-700 pb-4">{{ $post->title }}</h1>
                 <p class="text-sm pb-8">
-                    By <a href="#" class="font-semibold hover:text-gray-800">{{ $post->user->name }}</a>, Published on <span class="font-semibold text-green-500">{{ $post->getFormatedDate() }}</span>
+                    By <a href="#" class="font-semibold hover:text-gray-800">{{ $post->user->name }}</a>, Published on <span class="font-semibold text-green-500">{{ $post->getFormatedDate() }}</span> | {{ $post->human_read_time }}
                 </p>
                 <h1 class="text-2xl font-bold pb-3">Introduction</h1>
                 <div class="text-justify">
                     {!! $post->body !!}
                 </div>
+
+                <livewire:up-down-vote :post="$post">
             </div>
         </article>
 
@@ -38,12 +40,12 @@
                 @endif
             </div>
             <div class="w-1/2">
-                {{-- @if ($next) --}}
+                @if ($next)
                     <a href="{{ route('post.show', $next) }}" class="block w-full bg-white shadow hover:shadow-md text-right p-6">
                         <p class="text-lg text-blue-800 font-bold flex items-center justify-end">Next <i class="fas fa-arrow-right pl-1"></i></p>
                         <p class="pt-2">{{ Str::words($next->title, 5) }}</p>
                     </a>
-                {{-- @endif --}}
+                @endif
             </div>
         </div>
         {{-- Akhir Pagination --}}

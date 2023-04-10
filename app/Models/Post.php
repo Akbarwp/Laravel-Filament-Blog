@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Str;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -37,13 +38,25 @@ class Post extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function shortBody()
+    public function shortBody($words = 33)
     {
-        return Str::words(strip_tags($this->body), 33);
+        return Str::words(strip_tags($this->body), $words);
     }
 
     public function getFormatedDate()
     {
         return Carbon::make($this->published_at)->format('d F Y');
+    }
+
+    public function humanReadTime(): Attribute
+    {
+        return new Attribute(
+            get: function($value, $attribute) {
+                $words = Str::wordCount(strip_tags($attribute['body']));
+                $minutes = ceil($words / 200);
+
+                return $minutes . ' ' . str('mins')->plural($minutes) . ', ' . $words . ' ' . str('words')->plural($words);
+            }
+        );
     }
 }

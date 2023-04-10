@@ -77,18 +77,33 @@ class PostResource extends Resource
                 // Tables\Columns\TextColumn::make('created_at')
                 //     ->dateTime(),
                 Tables\Columns\ImageColumn::make('thumbnail'),
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\IconColumn::make('active')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('published_at')
-                    ->dateTime(),
+                Tables\Columns\TextColumn::make('title')->searchable(['title', 'body'])->sortable(),
+                Tables\Columns\IconColumn::make('active')->boolean()->sortable(),
+                Tables\Columns\TextColumn::make('published_at')->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('active'),
+                Tables\Filters\Filter::make('published_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('published_from'),
+                        Forms\Components\DatePicker::make('published_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['published_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['published_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -110,6 +125,7 @@ class PostResource extends Resource
             'index' => Pages\ListPosts::route('/'),
             'create' => Pages\CreatePost::route('/create'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
+            'view' => Pages\ViewPost::route('/{record}'),
         ];
     }    
 }
