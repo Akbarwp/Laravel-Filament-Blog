@@ -36,6 +36,7 @@ require __DIR__.'/auth.php';
 Route::get('/', [PostController::class, 'home'])->name('home');
 Route::get('/all', [PostController::class, 'index'])->name('all');
 Route::get('/about-us', [SiteController::class, 'about'])->name('about-us');
+Route::get('/search', [PostController::class, 'search'])->name('search');
 
 Route::get('/category/{category:slug}', [PostController::class, 'byCategory'])->name('post.byCategory');
 Route::get('/{post:slug}', [PostController::class, 'show'])->name('post.show');
