@@ -65,7 +65,7 @@ Follow the steps below to clone and run the project in your local environment:
     php artisan migrate
     ```
 
-7. Run migration database:
+7. Run seeder database:
 
     ```bash
     php artisan db:seed
